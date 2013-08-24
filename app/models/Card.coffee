@@ -3,6 +3,7 @@ class window.Card extends Backbone.Model
   initialize: (params) ->
     @set
       revealed: true
+      #!params.rank is saying "if it's zero", which is king
       value: if !params.rank or 10 < params.rank then 10 else params.rank
       suitName: ['Spades', 'Diamonds', 'Clubs', 'Hearts'][params.suit]
       rankName: switch params.rank
@@ -14,4 +15,4 @@ class window.Card extends Backbone.Model
 
   flip: ->
     @set 'revealed', !@get 'revealed'
-    @
+    return @
