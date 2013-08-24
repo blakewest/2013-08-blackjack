@@ -9,6 +9,7 @@ class window.AppView extends Backbone.View
   events:
     "click .hit-button": -> @model.get('playerHand').hit()
     "click .stand-button": -> @model.get('playerHand').stand()
+    "click .playAgain": -> @model.playAgain()
 
   initialize: ->
     @model.on 'playerLose', @playerLose, @
@@ -18,12 +19,13 @@ class window.AppView extends Backbone.View
   render: ->
     @$el.children().detach()
     @$el.html @template()
-    console.log(@model.get 'playerHand')
     @$('.player-hand-container').html new HandView(collection: @model.get 'playerHand').el
     @$('.dealer-hand-container').html new HandView(collection: @model.get 'dealerHand').el
 
   playerLose: ->
-    console.log('player loses')
+    console.log 'player loses'
+    @$el.append('<div class="gameover lost">Oh noes! You lost. <div class="playAgain">Play again?</div></div>')
 
   playerWin: ->
-    console.log('playerWin')
+    console.log 'playerWin'
+    @$el.append('<div class="gameover won">Hell yeah, you won!<div class="playAgain">Play again?</div></div>')

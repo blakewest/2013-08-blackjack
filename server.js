@@ -13,13 +13,27 @@ app.get("/", function(request, response) {
 });
 
 var userCount = 0;
+var cardValues = [10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10];
 
-var deck = _(_.range(1, 53)).shuffle().map(function(card) {
-      return {
-        rank: card % 13,
-        suit: Math.floor(card / 13)
-      };
-});
+var shuffleDeck = function() {
+  return _(_.range(1, 53)).shuffle().map(function(card) {
+    return {
+      rank: card % 13,
+      suit: Math.floor(card / 13) % 4
+    };
+  });
+};
+
+var deck = shuffleDeck();
+
+var bestScore = function(scores) {
+  if (scores.length > 1 && scores[1] <= 21) {
+    return scores[1];
+  }
+  else {
+    return scores[0];
+  }
+};
 
 io.sockets.on('connection', function(socket) {
   userCount++;
@@ -27,13 +41,25 @@ io.sockets.on('connection', function(socket) {
   socket.emit('userId', {userId: userCount});
 
   socket.on('hit', function(data) {
-    socket.emit('recieveCard', deck.pop());
+    socket.emit('receiveCard', deck.pop());
   });
 
   io.sockets.emit('newUser', {userId: userCount});
 
   socket.on('startGame', function() {
-    console.log('dealin cards');
     socket.emit('dealCards', [deck.pop(), deck.pop(), deck.pop(), deck.pop()]);
+  });
+
+  socket.on('stand', function(scores) {
+    var cards = [];
+
+    while(bestScore(scores) < 17) {
+      var card = deck.pop();
+      cards.push(card);
+      for(var i = 0; i < scores.length; i++) {
+        scores[i] += cardValues[card["rank"]];
+      }
+    }
+    socket.emit('endGame', cards);
   });
 });

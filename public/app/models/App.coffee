@@ -10,43 +10,47 @@ class window.App extends Backbone.Model
 
     socket.emit('startGame')
 
-    socket.on('dealCards', (cards) ->
+    socket.on 'dealCards', (cards) ->
       card0 = new Card(cards[0])
       card1 = new Card(cards[1])
       card2 = new Card(cards[2])
       card3 = new Card(cards[3])
       app.set 'playerHand', new Hand [ card0, card1 ]
       app.set 'dealerHand', new Hand [ card2.flip(), card3 ]
-      app.trigger('renderGame')
-    )
+      app.setHandlers()
+      app.trigger 'renderGame'
 
-    socket.on('userId', (data) ->
-      app.set('userId', data.userId))
+    socket.on 'userId', (data) ->
+      app.set 'userId', data.userId
 
-    socket.on('receiveCard', (card) ->
-      app.get('playerHand').addCardToHand(card))
+    socket.on 'receiveCard', (card) ->
+      console.log('recieved new card')
+      console.log(card)
+      app.get('playerHand').addCardToHand(card)
 
-    @set('socket', socket)
+    socket.on 'endGame', (cards) -> app.endGame(cards)
 
-    @get('playerHand').on('hit', @sendHit, @)
-    @get('playerHand').on('endGame', @endGame, @)
-    @get('playerHand').on('bust', @bust, @)
+    @set 'socket', socket
 
-  endGame: ->
-    dealer = @get('dealerHand')
+  setHandlers: ->
+    @get('playerHand').on 'hit', @sendHit, @
+    @get('playerHand').on 'stand', =>
+      app = @
+      app.get('dealerHand').at(0).flip()
+      app.get('socket').emit('stand', app.get('dealerHand').scores())
+    @get('playerHand').on 'bust', @bust, @
 
-    dealer.at(0).flip()
+  endGame: (cards) ->
+    dealer = @get 'dealerHand'
+    dealer.add(new Card(card)) for card in cards
+    dealerScore = dealer.bestScore()
 
     playerScore = @get('playerHand').bestScore()
 
-    while dealer.bestScore() < 17
-      dealer.hit()
 
-    dealerScore = dealer.bestScore()
-
-    if playerScore > dealerScore then @trigger('playerWin')
+    if playerScore > dealerScore then @trigger 'playerWin'
     else
-      if dealerScore > 21 then @trigger('playerWin')
+      if dealerScore > 21 then @trigger 'playerWin'
       else @trigger("playerLose")
 
   bust: ->
@@ -54,5 +58,9 @@ class window.App extends Backbone.Model
     @get('dealerHand').at(0).flip()
 
   sendHit: ->
+    console.log('are we sending')
     @get('socket').emit('hit', {userId: @get('userId')})
+
+  playAgain: ->
+    console.log("this will actually give you a new game")
 
