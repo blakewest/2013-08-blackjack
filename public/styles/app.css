@@ -14,3 +14,38 @@
 .hand {
   overflow: auto;
 }
+
+.gameover {
+  margin: 40px 5px;
+  padding: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 3px;
+  width: 200px;
+}
+
+.lost {
+  background-color: rgba(256, 0, 0, .6);
+  border-color: red;
+}
+
+
+.won {
+  background-color: rgba(0, 256, 0, .6);
+  border-color: green;
+}
+
+.playAgain {
+  background-color: #ccc;
+  padding: 20px;
+  margin: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 3px;
+  border-color: black;
+  cursor: pointer;
+}
+
+.playAgain:hover {
+  background-color: white;
+}
