@@ -22,7 +22,7 @@ class window.AppView extends Backbone.View
     @$('.dealer-hand-container').html new HandView(collection: @model.get 'dealerHand').el
 
   playerLose: ->
-    console.log('player lsoes')
+    console.log('player loses')
 
   playerWin: ->
     console.log('playerWin')
