@@ -20,9 +20,6 @@ class window.App extends Backbone.Model
       app.setHandlers()
       app.trigger 'renderGame'
 
-    socket.on 'userId', (data) ->
-      app.set 'userId', data.userId
-
     socket.on 'receiveCard', (card) ->
       app.get('playerHand').addCardToHand(card)
 

@@ -12,17 +12,22 @@ app.get("/", function(request, response) {
   response.sendfile(__dirname + "/index.html");
 });
 
-var userCount = 0;
 var cardValues = [10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10];
+var deck;
+var marker;
 
 var shuffleDeck = function() {
-  return _(_.range(1, 53)).shuffle().map(function(card) {
+  deck = _(_.range(1, 261)).shuffle().map(function(card) {
     return {
       rank: card % 13,
       suit: Math.floor(card / 13) % 4
     };
   });
+
+  marker = Math.floor(Math.random() * 60) + 156;
 };
+
+shuffleDeck();
 
 var bestScore = function(scores) {
   if (scores.length > 1 && scores[1] <= 21) {
@@ -34,18 +39,15 @@ var bestScore = function(scores) {
 };
 
 io.sockets.on('connection', function(socket) {
-  userCount++;
-
-  socket.emit('userId', {userId: userCount});
 
   socket.on('hit', function(data) {
     socket.emit('receiveCard', deck.pop());
   });
 
-  io.sockets.emit('newUser', {userId: userCount});
-
   socket.on('startGame', function() {
-    deck = shuffleDeck();
+    if(deck.length < marker) {
+      shuffleDeck();
+    }
     socket.emit('dealCards', [deck.pop(), deck.pop(), deck.pop(), deck.pop()]);
   });
 
