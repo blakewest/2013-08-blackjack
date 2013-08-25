@@ -62,5 +62,6 @@ class window.App extends Backbone.Model
     @get('socket').emit('hit', {userId: @get('userId')})
 
   playAgain: ->
+    @get('socket').emit('startGame')
     console.log("this will actually give you a new game")
 

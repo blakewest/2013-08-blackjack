@@ -24,8 +24,6 @@ var shuffleDeck = function() {
   });
 };
 
-var deck = shuffleDeck();
-
 var bestScore = function(scores) {
   if (scores.length > 1 && scores[1] <= 21) {
     return scores[1];
@@ -47,6 +45,7 @@ io.sockets.on('connection', function(socket) {
   io.sockets.emit('newUser', {userId: userCount});
 
   socket.on('startGame', function() {
+    deck = shuffleDeck();
     socket.emit('dealCards', [deck.pop(), deck.pop(), deck.pop(), deck.pop()]);
   });
 
@@ -62,4 +61,5 @@ io.sockets.on('connection', function(socket) {
     }
     socket.emit('endGame', cards);
   });
+
 });
