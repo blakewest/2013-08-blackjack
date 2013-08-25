@@ -23,9 +23,7 @@ class window.AppView extends Backbone.View
     @$('.dealer-hand-container').html new HandView(collection: @model.get 'dealerHand').el
 
   playerLose: ->
-    console.log 'player loses'
     @$el.append('<div class="gameover lost">Oh noes! You lost. <div class="playAgain">Play again?</div></div>')
 
   playerWin: ->
-    console.log 'playerWin'
     @$el.append('<div class="gameover won">Hell yeah, you won!<div class="playAgain">Play again?</div></div>')

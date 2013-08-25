@@ -5,7 +5,7 @@ class window.App extends Backbone.Model
     @set('playerHand', new Hand())
     @set('dealerHand', new Hand())
 
-    socket = io.connect('http://localhost:3000')
+    socket = io.connect('http://10.0.1.17:3000')
     app = @
 
     socket.emit('startGame')
@@ -24,8 +24,6 @@ class window.App extends Backbone.Model
       app.set 'userId', data.userId
 
     socket.on 'receiveCard', (card) ->
-      console.log('recieved new card')
-      console.log(card)
       app.get('playerHand').addCardToHand(card)
 
     socket.on 'endGame', (cards) -> app.endGame(cards)
@@ -58,10 +56,7 @@ class window.App extends Backbone.Model
     @get('dealerHand').at(0).flip()
 
   sendHit: ->
-    console.log('are we sending')
     @get('socket').emit('hit', {userId: @get('userId')})
 
   playAgain: ->
     @get('socket').emit('startGame')
-    console.log("this will actually give you a new game")
-

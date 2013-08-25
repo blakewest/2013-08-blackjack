@@ -5,9 +5,7 @@ class window.Hand extends Backbone.Collection
   initialize: (array, @deck, @isDealer) ->
 
   hit: ->
-    console.log('are we hitting?')
-    @trigger('hit') if !@isDealer
-    @trigger('hit') if @isDealer
+    @trigger('hit')
 
   stand: ->
     @trigger('stand')
@@ -34,7 +32,6 @@ class window.Hand extends Backbone.Collection
       if hasAce then [score, score + 10] else [score]
 
   addCardToHand: (card) ->
-    console.log('in add card to hand')
     @add(new Card(card))
     @trigger('bust') if @scores()[0] > 21 and !@isDealer
 
